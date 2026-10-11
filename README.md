@@ -4,12 +4,14 @@
 
 Install the required dependencies:
 
->
-> `pip3 install -r requirements`
-
+```bash
+pip3 install -r requirements
+```
 Then just start the program.
 
-> `python3 snake.py`
+```bash
+python3 snake.py
+```
 
 ## Controls
 
