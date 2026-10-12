@@ -1,13 +1,19 @@
-from multiprocessing import Pool 
+from multiprocessing import Pool
+import time
 
 import snake
 
 
 def sweep():
-    with Pool(processes=4) as pool:
+    process_arr = []
+    with Pool(processes=10) as pool:
         for i in range(5):
-            pool.
+            process_arr.append(pool.apply_async(snake.main))
+        for i in process_arr:
+            i.get()
 
 
 if __name__ == "__main__":
-    def sweep()
+    start_time = time.time()
+    sweep()
+    print("--- %s seconds ---" % (time.time() - start_time))
