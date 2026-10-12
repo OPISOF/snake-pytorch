@@ -1,3 +1,4 @@
+import time
 from datetime import datetime
 import os
 import random
@@ -338,4 +339,7 @@ def main():
 
 
 if __name__ == "__main__":
+    start_time = time.time()
     main()
+    print("--- %s seconds ---" % (time.time() - start_time))
+
