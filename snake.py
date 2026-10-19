@@ -1,7 +1,7 @@
-import time
-from datetime import datetime
 import os
 import random
+import time
+from datetime import datetime
 
 import matplotlib.pyplot as plt
 import pygame
@@ -288,37 +288,27 @@ def spawn_food(snake):
     return food
 
 
-def main():
-    with open("config.toml", "rb") as file:
-        config = tomllib.load(file)
-
-    random.seed(config['seed'])
-    torch.manual_seed(config['seed'])
-
-    game = SnakeGame()
-    renderer = Renderer()
-    agent = Agent(config)
-    plot = Plot()
-
+def run(config, game, renderer, agent, plot):
     while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                return
+        if renderer is not None:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    return
 
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    renderer.switch_render()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        renderer.switch_render()
 
-                if event.key == pygame.K_BACKSPACE:
-                    game.reset()
+                    if event.key == pygame.K_BACKSPACE:
+                        game.reset()
 
         state = game.get_state()
         action = agent.choose_action(state, game.count, config)
 
         is_game_over, reward = game.step(action, config)
 
-        if renderer.enabled:
+        if renderer is not None and renderer.enabled:
             renderer.draw_frame(game)
 
         next_state = game.get_state()
@@ -338,8 +328,22 @@ def main():
             game.reset()
 
 
+def main():
+    with open("config.toml", "rb") as file:
+        config = tomllib.load(file)
+
+    random.seed(config["seed"])
+    torch.manual_seed(config["seed"])
+
+    game = SnakeGame()
+    renderer = Renderer()
+    agent = Agent(config)
+    plot = Plot()
+
+    run(config, game, renderer, agent, plot)
+
+
 if __name__ == "__main__":
     start_time = time.time()
     main()
     print("--- %s seconds ---" % (time.time() - start_time))
-
