@@ -14,15 +14,15 @@ class Config:
             self.sweep = toml.load(file)
         with open("config.toml", "rb") as file:
             self.default = toml.load(file)
-        self.list = []
+        self.configs = []
 
     def update(self):
-        for current_config in self.sweep:
+        for run_name in self.sweep:
             for key in self.default:
-                if key not in self.sweep[current_config]:
-                    self.sweep[current_config][key] = self.default[key]
+                if key not in self.sweep[run_name]:
+                    self.sweep[run_name][key] = self.default[key]
 
-            self.list.append(self.sweep[current_config])
+            self.configs.append(self.sweep[run_name])
 
 
 def run_config(config):
@@ -38,16 +38,16 @@ def run_config(config):
 
 
 def main():
-    process_arr = []
+    jobs = []
     processes = 2 
     config = Config()
     config.update()
 
     with Pool(processes) as pool:
-        for parameters in config.list:
-            process_arr.append(pool.apply_async(run_config, (parameters,)))
-        for i in process_arr:
-            i.get()
+        for parameters in config.configs:
+            jobs.append(pool.apply_async(run_config, (parameters,)))
+        for job in jobs:
+            job.get()
 
 
 if __name__ == "__main__":
