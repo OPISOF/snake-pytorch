@@ -256,14 +256,24 @@ class Plot:
             sum(self.score_series[-50:]) / len(self.score_series[-50:])
         )
 
-    def save(self):
+    def save(self, config):
         self.update()
 
         if not os.path.exists("./runs"):
             os.makedirs("./runs")
 
-        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        plt.savefig(f"./runs/run{timestamp}")
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
+
+        if not os.path.exists((f"./runs/{timestamp}")):
+            os.makedirs(f"./runs/{timestamp}")
+
+        run_name = ""
+        for key in config:
+            keys = str(config[key]).split(".")
+            for i in keys:
+                run_name += (i + "-") 
+
+        plt.savefig(f"./runs/{timestamp}/{run_name}")
 
 
 def is_crash(x, y, snake):
@@ -319,7 +329,7 @@ def run(config, game, renderer, agent, plot):
             plot.refresh_score(game.score)
 
             if game.count >= config["limit_games"]:
-                plot.save()
+                plot.save(config)
                 return
 
             if game.count % PLOT_RATE == 0:
