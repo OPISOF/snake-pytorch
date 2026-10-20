@@ -19,7 +19,7 @@ class Config:
     def update(self):
         for current_config in self.sweep:
             for key in self.default:
-                if key not in current_config:
+                if key not in self.sweep[current_config]:
                     self.sweep[current_config][key] = self.default[key]
 
             self.list.append(self.sweep[current_config])
@@ -39,7 +39,7 @@ def run_config(config):
 
 def main():
     process_arr = []
-    processes = 4
+    processes = 2 
     config = Config()
     config.update()
 
