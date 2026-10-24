@@ -264,14 +264,15 @@ class Plot:
 
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
 
-        if not os.path.exists((f"./runs/{timestamp}")):
+        if not os.path.exists(f"./runs/{timestamp}"):
             os.makedirs(f"./runs/{timestamp}")
 
         run_name = ""
         for key in config:
             keys = str(config[key]).split(".")
             for i in keys:
-                run_name += (i + "-") 
+                run_name += i
+            run_name += "-"
 
         plt.savefig(f"./runs/{timestamp}/{run_name}")
 
