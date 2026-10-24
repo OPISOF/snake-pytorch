@@ -28,6 +28,11 @@ class Config:
 
                 self.configs.append(run_config)
 
+    def get_processes(self):
+        if len(self.configs) >= 4:
+            return 4
+        else:
+            return len(self.configs)
 
 def run_config(config):
     random.seed(config["seed"])
@@ -43,9 +48,9 @@ def run_config(config):
 
 def main():
     jobs = []
-    processes = 4
     config = Config()
     config.update()
+    processes = config.get_processes()
 
     with Pool(processes) as pool:
         for parameters in config.configs:
