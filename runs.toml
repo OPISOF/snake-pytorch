@@ -1,4 +1,6 @@
+seed = [0, 10, 42]
 [config-1]
 survival_reward = 0.01
 [config-2]
 survival_reward = 0
+

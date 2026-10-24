@@ -17,12 +17,16 @@ class Config:
         self.configs = []
 
     def update(self):
-        for run_name in self.sweep:
-            for key in self.default:
-                if key not in self.sweep[run_name]:
-                    self.sweep[run_name][key] = self.default[key]
+        for seed in self.sweep["seed"]:
+            for run_name in dict(list(self.sweep.items())[1:]):
+                run_config = self.sweep[run_name].copy()
+                run_config["seed"] = seed
 
-            self.configs.append(self.sweep[run_name])
+                for key in self.default:
+                    if key not in run_config:
+                        run_config[key] = self.default[key]
+
+                self.configs.append(run_config)
 
 
 def run_config(config):
@@ -39,7 +43,7 @@ def run_config(config):
 
 def main():
     jobs = []
-    processes = 2 
+    processes = 4
     config = Config()
     config.update()
 
