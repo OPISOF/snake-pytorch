@@ -34,6 +34,7 @@ class Config:
         else:
             return len(self.configs)
 
+
 def run_config(config):
     random.seed(config["seed"])
     torch.manual_seed(config["seed"])
@@ -42,6 +43,7 @@ def run_config(config):
     renderer = None
     agent = snake.Agent(config)
     plot = snake.Plot()
+    plot.enabled = False
 
     snake.run(config, game, renderer, agent, plot)
 

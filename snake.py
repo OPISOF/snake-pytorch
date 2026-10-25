@@ -231,10 +231,15 @@ class Agent:
 
 class Plot:
     def __init__(self):
-        plt.ion()
         self.score_series = []
         self.smooth_score_series = []
         self.mean_score_series = []
+        self.enabled = True
+        self.init()
+
+    def init(self):
+        if self.enabled:
+            plt.ion()
 
     def update(self):
         plt.clf()
@@ -246,6 +251,8 @@ class Plot:
         plt.ylabel("Score")
         plt.grid(False)
         plt.ylim(0, 150)
+
+    def draw(self):
         plt.draw()
         plt.pause(0.001)
 
@@ -335,6 +342,8 @@ def run(config, game, renderer, agent, plot):
 
             if game.count % PLOT_RATE == 0:
                 plot.update()
+                if plot.enabled:
+                    plot.draw()
 
             game.reset()
 
