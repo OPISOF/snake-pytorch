@@ -230,12 +230,13 @@ class Agent:
 
 
 class Plot:
-    def __init__(self):
+    def __init__(self, timestamp):
         self.score_series = []
         self.smooth_score_series = []
         self.mean_score_series = []
         self.enabled = True
         self.init()
+        self.timestamp = timestamp 
 
     def init(self):
         if self.enabled:
@@ -266,14 +267,6 @@ class Plot:
     def save(self, config):
         self.update()
 
-        if not os.path.exists("./runs"):
-            os.makedirs("./runs")
-
-        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
-
-        if not os.path.exists(f"./runs/{timestamp}"):
-            os.makedirs(f"./runs/{timestamp}")
-
         run_name = ""
         for key in config:
             keys = str(config[key]).split(".")
@@ -281,8 +274,13 @@ class Plot:
                 run_name += i
             run_name += "-"
 
-        plt.savefig(f"./runs/{timestamp}/{run_name}")
+        plt.savefig(f"./runs/{self.timestamp}/{run_name}")
 
+
+    def get_stats(self, exploration_games):
+        max_score = max(self.score_series)
+        final_mean_score = sum(self.score_series[exploration_games:]) / len(self.score_series[exploration_games:])
+        return max_score, final_mean_score 
 
 def is_crash(x, y, snake):
     if x >= SCREEN_WIDTH or y >= SCREEN_HEIGHT or x < 0 or y < 0:
@@ -305,6 +303,18 @@ def spawn_food(snake):
 
     return food
 
+def make_experiment_dir():
+    if not os.path.exists("./runs"):
+        os.makedirs("./runs")
+
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
+    experiment_dir = f"./runs/{timestamp}"
+
+    if not os.path.exists(f"./runs/{timestamp}"):
+        os.makedirs(f"./runs/{timestamp}")
+
+    return timestamp 
+    
 
 def run(config, game, renderer, agent, plot):
     while True:
@@ -337,8 +347,9 @@ def run(config, game, renderer, agent, plot):
             plot.refresh_score(game.score)
 
             if game.count >= config["limit_games"]:
-                plot.save(config)
-                return
+                timestamp = plot.save(config)
+                stats = plot.get_stats(config["exploration_games"])
+                return stats
 
             if game.count % PLOT_RATE == 0:
                 plot.update()
@@ -358,7 +369,8 @@ def main():
     game = SnakeGame()
     renderer = Renderer()
     agent = Agent(config)
-    plot = Plot()
+    timestamp = make_experiment_dir()
+    plot = Plot(timestamp)
 
     run(config, game, renderer, agent, plot)
 
