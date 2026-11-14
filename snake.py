@@ -219,7 +219,7 @@ class Agent:
         if not is_game_over[0]:
             q_new = reward[0] + config["trainer_gamma"] * torch.max(
                 self.model(next_state)
-            )
+            ).detach()
 
         target[0][torch.argmax(action).item()] = q_new
 
@@ -236,7 +236,7 @@ class Plot:
         self.mean_score_series = []
         self.enabled = True
         self.init()
-        self.timestamp = timestamp 
+        self.timestamp = timestamp
 
     def init(self):
         if self.enabled:
@@ -276,11 +276,13 @@ class Plot:
 
         plt.savefig(f"./runs/{self.timestamp}/{run_name}")
 
-
     def get_stats(self, exploration_games):
         max_score = max(self.score_series)
-        final_mean_score = sum(self.score_series[exploration_games:]) / len(self.score_series[exploration_games:])
-        return max_score, final_mean_score 
+        final_mean_score = sum(self.score_series[exploration_games:]) / len(
+            self.score_series[exploration_games:]
+        )
+        return max_score, final_mean_score
+
 
 def is_crash(x, y, snake):
     if x >= SCREEN_WIDTH or y >= SCREEN_HEIGHT or x < 0 or y < 0:
@@ -303,6 +305,7 @@ def spawn_food(snake):
 
     return food
 
+
 def make_experiment_dir():
     if not os.path.exists("./runs"):
         os.makedirs("./runs")
@@ -313,8 +316,8 @@ def make_experiment_dir():
     if not os.path.exists(f"./runs/{timestamp}"):
         os.makedirs(f"./runs/{timestamp}")
 
-    return timestamp 
-    
+    return timestamp
+
 
 def run(config, game, renderer, agent, plot):
     while True:
@@ -347,7 +350,7 @@ def run(config, game, renderer, agent, plot):
             plot.refresh_score(game.score)
 
             if game.count >= config["limit_games"]:
-                timestamp = plot.save(config)
+                plot.save(config)
                 stats = plot.get_stats(config["exploration_games"])
                 return stats
 
