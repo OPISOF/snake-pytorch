@@ -1,9 +1,9 @@
+import csv
 import random
 import time
 from multiprocessing import Pool
 
 import tomllib as toml
-import csv
 import torch
 
 import snake
@@ -37,8 +37,19 @@ class Config:
 
 
 class ResultsLog:
-    def __init__(self):
-        pass        
+    def __init__(self, timestamp):
+        self.filename = f"runs/{timestamp}/stats.csv"
+        with open(self.filename, "w", newline="") as csvfile:
+            fieldnames = ["name", "max score", "mean_score"]
+            writer = csv.writer(csvfile)
+            writer.writerow(fieldnames)
+
+    def add(self, stats, config):
+        run_name = snake.get_run_name(config)
+        with open(self.filename, "a", newline="") as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow([run_name] + stats)
+
 
 def run_config(config, results, timestamp):
     random.seed(config["seed"])
@@ -50,7 +61,8 @@ def run_config(config, results, timestamp):
     plot = snake.Plot(timestamp)
     plot.enabled = False
 
-    stats = snake.run(config, game, renderer, agent, plot)  
+    stats = snake.run(config, game, renderer, agent, plot)
+    results.add(stats, config)
 
 
 def main():
@@ -58,8 +70,8 @@ def main():
     config = Config()
     config.update()
     processes = config.get_processes()
-    results = ResultsLog()
     timestamp = snake.make_experiment_dir()
+    results = ResultsLog(timestamp)
 
     with Pool(processes) as pool:
         for parameters in config.configs:

@@ -217,9 +217,10 @@ class Agent:
 
         q_new = reward[0]
         if not is_game_over[0]:
-            q_new = reward[0] + config["trainer_gamma"] * torch.max(
-                self.model(next_state)
-            ).detach()
+            q_new = (
+                reward[0]
+                + config["trainer_gamma"] * torch.max(self.model(next_state)).detach()
+            )
 
         target[0][torch.argmax(action).item()] = q_new
 
@@ -267,12 +268,7 @@ class Plot:
     def save(self, config):
         self.update()
 
-        run_name = ""
-        for key in config:
-            keys = str(config[key]).split(".")
-            for i in keys:
-                run_name += i
-            run_name += "-"
+        run_name = get_run_name(config)
 
         plt.savefig(f"./runs/{self.timestamp}/{run_name}")
 
@@ -281,7 +277,7 @@ class Plot:
         final_mean_score = sum(self.score_series[exploration_games:]) / len(
             self.score_series[exploration_games:]
         )
-        return max_score, final_mean_score
+        return [max_score, final_mean_score]
 
 
 def is_crash(x, y, snake):
@@ -317,6 +313,17 @@ def make_experiment_dir():
         os.makedirs(f"./runs/{timestamp}")
 
     return timestamp
+
+
+def get_run_name(config):
+    run_name = ""
+    for key in config:
+        keys = str(config[key]).split(".")
+        for i in keys:
+            run_name += i
+        run_name += "-"
+
+    return run_name
 
 
 def run(config, game, renderer, agent, plot):

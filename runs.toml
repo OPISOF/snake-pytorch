@@ -1,6 +1,10 @@
 seed = [0, 10, 42]
-[config-1]
-survival_reward = 0.01
-[config-2]
-survival_reward = 0
 
+[config]
+inner_layer = 128
+trainer_gamma = 0.9
+learning_rate = 0.001
+exploration_games = 500
+survival_reward = 0
+death_reward = -10
+eating_reward = 10
