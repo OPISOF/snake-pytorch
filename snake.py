@@ -141,10 +141,11 @@ class Renderer:
     def __init__(self):
         pygame.init()
         self.enabled = False
+        random_colour = random.Random()
         self.snake_colour = (
-            random.randint(0, 255),
-            random.randint(0, 255),
-            random.randint(0, 255),
+            random_colour.randint(0, 255),
+            random_colour.randint(0, 255),
+            random_colour.randint(0, 255),
         )
         self.switch_display()
         self.clock = pygame.time.Clock()
