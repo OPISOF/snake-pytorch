@@ -47,8 +47,10 @@ class SnakeGame:
 
         self.steps += 1
 
-        if (is_crash(head_x, head_y, self.snake) or 
-        self.steps > len(self.snake)*config['step_limit']):
+        if (
+            is_crash(head_x, head_y, self.snake)
+            or self.steps > len(self.snake) * config["step_limit"]
+        ):
             reward = config["death_reward"]
             return True, reward
 
@@ -242,7 +244,7 @@ class Plot:
         self.mean_score_series = []
         self.enabled = True
         self.init()
-        self.experiment_dir = experiment_dir 
+        self.experiment_dir = experiment_dir
 
     def init(self):
         if self.enabled:
@@ -317,7 +319,7 @@ def make_experiment_dir():
     if not os.path.exists(experiment_dir):
         os.makedirs(experiment_dir)
 
-    return experiment_dir 
+    return experiment_dir
 
 
 def get_run_name(config):
@@ -362,14 +364,14 @@ def run(config, game, renderer, agent, plot):
             plot.refresh_score(game.score)
 
             if game.count >= config["limit_games"]:
+                plot.update()
                 plot.save(config)
                 stats = plot.get_stats(config["exploration_games"])
                 return stats
 
-            if game.count % PLOT_RATE == 0:
+            if game.count % PLOT_RATE == 0 and plot.enabled:
                 plot.update()
-                if plot.enabled:
-                    plot.draw()
+                plot.draw()
 
             game.reset()
 
