@@ -2,6 +2,7 @@ import csv
 import random
 import time
 from multiprocessing import Pool
+from pathlib import Path
 
 import tomllib as toml
 import torch
@@ -39,10 +40,12 @@ class Config:
 class ResultsLog:
     def __init__(self, experiment_dir):
         self.filename = f"{experiment_dir}/stats.csv"
-        with open(self.filename, "w", newline="") as csvfile:
-            fieldnames = ["name", "max score", "mean_score"]
-            writer = csv.writer(csvfile)
-            writer.writerow(fieldnames)
+        path = Path(self.filename)
+        if not path.exists():
+            with open(self.filename, "a", newline="") as csvfile:
+                fieldnames = ["name", "max score", "mean_score"]
+                writer = csv.writer(csvfile)
+                writer.writerow(fieldnames)
 
     def add(self, stats, config):
         run_name = snake.get_run_name(config)
@@ -75,7 +78,9 @@ def main():
 
     with Pool(processes) as pool:
         for parameters in config.configs:
-            jobs.append(pool.apply_async(run_config, (parameters, results, experiment_dir)))
+            jobs.append(
+                pool.apply_async(run_config, (parameters, results, experiment_dir))
+            )
         for job in jobs:
             job.get()
 
