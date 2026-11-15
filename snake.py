@@ -28,6 +28,7 @@ class SnakeGame:
         self.food = spawn_food(self.snake)
         self.score = 0
         self.count += 1
+        self.steps = 0
 
     def step(self, action, config):
         reward = config["survival_reward"]
@@ -44,7 +45,10 @@ class SnakeGame:
         elif self.direction == "LEFT":
             head_x -= BLOCK
 
-        if is_crash(head_x, head_y, self.snake):
+        self.steps += 1
+
+        if (is_crash(head_x, head_y, self.snake) or 
+        self.steps > len(self.snake)*config['step_limit']):
             reward = config["death_reward"]
             return True, reward
 
