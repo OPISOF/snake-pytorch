@@ -6,6 +6,7 @@ from pathlib import Path
 
 import tomllib as toml
 import torch
+from matplotlib import use as matplotlib_use
 
 import snake
 
@@ -61,6 +62,7 @@ def run_config(config, results, experiment_dir):
     game = snake.SnakeGame()
     renderer = None
     agent = snake.Agent(config)
+    matplotlib_use("Agg")
     plot = snake.Plot(experiment_dir)
     plot.enabled = False
 
