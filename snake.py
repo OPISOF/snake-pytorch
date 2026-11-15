@@ -231,13 +231,13 @@ class Agent:
 
 
 class Plot:
-    def __init__(self, timestamp):
+    def __init__(self, experiment_dir):
         self.score_series = []
         self.smooth_score_series = []
         self.mean_score_series = []
         self.enabled = True
         self.init()
-        self.timestamp = timestamp
+        self.experiment_dir = experiment_dir 
 
     def init(self):
         if self.enabled:
@@ -270,7 +270,7 @@ class Plot:
 
         run_name = get_run_name(config)
 
-        plt.savefig(f"./runs/{self.timestamp}/{run_name}")
+        plt.savefig(f"{self.experiment_dir}/{run_name}")
 
     def get_stats(self, exploration_games):
         max_score = max(self.score_series)
@@ -309,10 +309,10 @@ def make_experiment_dir():
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
     experiment_dir = f"./runs/{timestamp}"
 
-    if not os.path.exists(f"./runs/{timestamp}"):
-        os.makedirs(f"./runs/{timestamp}")
+    if not os.path.exists(experiment_dir):
+        os.makedirs(experiment_dir)
 
-    return timestamp
+    return experiment_dir 
 
 
 def get_run_name(config):
@@ -379,8 +379,8 @@ def main():
     game = SnakeGame()
     renderer = Renderer()
     agent = Agent(config)
-    timestamp = make_experiment_dir()
-    plot = Plot(timestamp)
+    experiment_dir = make_experiment_dir()
+    plot = Plot(experiment_dir)
 
     run(config, game, renderer, agent, plot)
 

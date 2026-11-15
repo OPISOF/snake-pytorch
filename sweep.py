@@ -37,8 +37,8 @@ class Config:
 
 
 class ResultsLog:
-    def __init__(self, timestamp):
-        self.filename = f"runs/{timestamp}/stats.csv"
+    def __init__(self, experiment_dir):
+        self.filename = f"{experiment_dir}/stats.csv"
         with open(self.filename, "w", newline="") as csvfile:
             fieldnames = ["name", "max score", "mean_score"]
             writer = csv.writer(csvfile)
@@ -51,14 +51,14 @@ class ResultsLog:
             writer.writerow([run_name] + stats)
 
 
-def run_config(config, results, timestamp):
+def run_config(config, results, experiment_dir):
     random.seed(config["seed"])
     torch.manual_seed(config["seed"])
 
     game = snake.SnakeGame()
     renderer = None
     agent = snake.Agent(config)
-    plot = snake.Plot(timestamp)
+    plot = snake.Plot(experiment_dir)
     plot.enabled = False
 
     stats = snake.run(config, game, renderer, agent, plot)
@@ -70,12 +70,12 @@ def main():
     config = Config()
     config.update()
     processes = config.get_processes()
-    timestamp = snake.make_experiment_dir()
-    results = ResultsLog(timestamp)
+    experiment_dir = snake.make_experiment_dir()
+    results = ResultsLog(experiment_dir)
 
     with Pool(processes) as pool:
         for parameters in config.configs:
-            jobs.append(pool.apply_async(run_config, (parameters, results, timestamp)))
+            jobs.append(pool.apply_async(run_config, (parameters, results, experiment_dir)))
         for job in jobs:
             job.get()
 
