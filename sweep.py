@@ -44,7 +44,7 @@ class ResultsLog:
         path = Path(self.filename)
         if not path.exists():
             with open(self.filename, "a", newline="") as csvfile:
-                fieldnames = ["name", "max score", "mean_score"]
+                fieldnames = ["name", "max score", "mean_score (last 100 games)"]
                 writer = csv.writer(csvfile)
                 writer.writerow(fieldnames)
 

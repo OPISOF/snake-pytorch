@@ -281,9 +281,7 @@ class Plot:
 
     def get_stats(self, exploration_games):
         max_score = max(self.score_series)
-        final_mean_score = sum(self.score_series[exploration_games:]) / len(
-            self.score_series[exploration_games:]
-        )
+        final_mean_score = sum(self.score_series[-100:]) / 100
         return [max_score, final_mean_score]
 
 
@@ -366,7 +364,9 @@ def run(config, game, renderer, agent, plot):
             if game.count >= config["limit_games"]:
                 plot.update()
                 plot.save(config)
-                stats = plot.get_stats(config["exploration_games"])
+                stats = None
+                if config["limit_games"] >= config["exploration_games"]:
+                    stats = plot.get_stats(config["exploration_games"])
                 return stats
 
             if game.count % PLOT_RATE == 0 and plot.enabled:
