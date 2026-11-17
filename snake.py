@@ -365,8 +365,8 @@ def run(config, game, renderer, agent, plot):
                 plot.update()
                 plot.save(config)
                 stats = None
-                if config["limit_games"] >= config["exploration_games"]:
-                    stats = plot.get_stats(config["exploration_games"])
+                # if config["limit_games"] >= config["exploration_games"]:
+                stats = plot.get_stats(config["exploration_games"])
                 return stats
 
             if game.count % PLOT_RATE == 0 and plot.enabled:
