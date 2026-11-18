@@ -48,7 +48,7 @@ class SnakeGame:
         self.steps += 1
 
         if (
-            is_crash(head_x, head_y, self.snake)
+            is_crash(head_x, head_y, self.snake[:-1])
             or self.steps > len(self.snake) * config["step_limit"]
         ):
             reward = config["death_reward"]
@@ -90,9 +90,9 @@ class SnakeGame:
 
         danger = []
 
-        danger.append(is_crash(danger_left[0], danger_left[1], self.snake))
-        danger.append(is_crash(danger_straight[0], danger_straight[1], self.snake))
-        danger.append(is_crash(danger_right[0], danger_right[1], self.snake))
+        danger.append(is_crash(danger_left[0], danger_left[1], self.snake[:-1]))
+        danger.append(is_crash(danger_straight[0], danger_straight[1], self.snake[:-1]))
+        danger.append(is_crash(danger_right[0], danger_right[1], self.snake[:-1]))
 
         general_state = []
 
