@@ -285,7 +285,7 @@ class Plot:
 
     def get_stats(self, exploration_games):
         max_score = max(self.score_series)
-        final_mean_score = sum(self.score_series[-100:]) / 100
+        final_mean_score = sum(self.score_series[-100:]) / len(self.score_series[-100:])
         return [max_score, final_mean_score]
 
 
