@@ -67,15 +67,15 @@ class ResultsLog:
 
 class GeneticAlgorithm:
     def __init__(self):
-        self.num_generations = 50
-        self.num_parents_mating = 4
+        self.num_generations = 15
+        self.num_parents_mating = 8
 
-        self.sol_per_pop = 8
+        self.sol_per_pop = 16
 
         self.gene_space = [
             [64, 128, 256, 512, 1024],  # inner_layer
-            {"low": 0.85, "high": 1},  # trainer_gamma
-            {"low": 10 ** (-4), "high": 10 ** (-3)},  # learning_rate
+            {"low": 0.9, "high": 1},  # trainer_gamma
+            {"low": 10 ** (-5), "high": 10 ** (-3)},  # learning_rate
             {"low": 100, "high": 2000},  # exploration_games
             [0, 0.01],  # survival_reward
         ]
@@ -84,13 +84,13 @@ class GeneticAlgorithm:
 
         self.num_genes = len(self.gene_space)
 
-        self.parent_selection_type = "sss"
+        self.parent_selection_type = "tournament"
         self.keep_parents = 1
 
-        self.crossover_type = "single_point"
+        self.crossover_type = "uniform"
 
-        self.mutation_type = "random"
-        self.mutation_percent_genes = 10
+        self.mutation_type = "adaptive"
+        self.mutation_num_genes = (2, 1)
 
         self.config = Config()
         self.experiment_dir = snake.make_experiment_dir()
@@ -126,7 +126,7 @@ class GeneticAlgorithm:
             keep_parents=self.keep_parents,
             crossover_type=self.crossover_type,
             mutation_type=self.mutation_type,
-            mutation_percent_genes=self.mutation_percent_genes,
+            mutation_num_genes=self.mutation_num_genes,
             parallel_processing=["process", 4],
         )
 
