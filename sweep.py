@@ -23,13 +23,16 @@ class Config:
 
         self.configs = []
 
-        overrides = dict(list(self.sweep.items())[1:])
+        seeds = self.sweep["seed"]
 
-        for seed in self.sweep["seed"]:
-            for run_name in overrides:
-                experiment_config = overrides[run_name].copy()
-                experiment_config = self.merge_with_defaults(experiment_config, seed)
-                self.configs.append(experiment_config)
+        for seed in seeds:
+            for run_name in self.sweep:
+                if run_name != "seed":
+                    experiment_config = self.sweep[run_name].copy()
+                    experiment_config = self.merge_with_defaults(
+                        experiment_config, seed
+                    )
+                    self.configs.append(experiment_config)
 
     def merge_with_defaults(self, experiment_config, seed=None):
         if seed is not None:
