@@ -205,7 +205,8 @@ class Agent:
         final_move = [0, 0, 0]
         state0 = torch.tensor(state, dtype=torch.float)
 
-        prediction = self.model(state0)
+        with torch.no_grad():
+            prediction = self.model(state0)
         move = torch.argmax(prediction).item()
 
         if config["exploration_games"] - count > random.randint(
