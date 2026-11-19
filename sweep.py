@@ -131,6 +131,10 @@ class GeneticAlgorithm:
         )
 
         ga_instance.run()
+        print("The process is finished! Look at the graph.")
+        fitness_graph = ga_instance.plot_fitness()
+        fitness_graph.savefig(f"{self.experiment_dir}/fitness_graph.png")
+        ga_instance.save(f"./{self.experiment_dir}/pygad_GA")
 
 
 def run_experiment(config, results, experiment_dir):
