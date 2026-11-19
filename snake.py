@@ -348,6 +348,7 @@ def run(config, game, renderer, agent, plot):
                         renderer.switch_render()
 
                     if event.key == pygame.K_BACKSPACE:
+                        plot.refresh_score(game.score)
                         game.reset()
 
         state = game.get_state()
