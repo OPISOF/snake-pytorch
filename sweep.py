@@ -1,12 +1,10 @@
 import csv
-import random
 import time
 from multiprocessing import Pool
 from pathlib import Path
 
 import pygad
 import tomllib as toml
-import torch
 from matplotlib import use as matplotlib_use
 
 import snake
@@ -142,8 +140,7 @@ class GeneticAlgorithm:
 
 def run_experiment(config, results, experiment_dir):
     if "seed" in config:
-        random.seed(config["seed"])
-        torch.manual_seed(config["seed"])
+        snake.set_seed(config)
 
     game = snake.SnakeGame()
     renderer = None

@@ -336,6 +336,11 @@ def get_run_name(config):
     return run_name
 
 
+def set_seed(config):
+    random.seed(config["seed"])
+    torch.manual_seed(config["seed"])
+
+
 def run(config, game, renderer, agent, plot):
     while True:
         if renderer is not None:
@@ -385,8 +390,7 @@ def main():
         config = tomllib.load(file)
 
     if "seed" in config:
-        random.seed(config["seed"])
-        torch.manual_seed(config["seed"])
+        set_seed(config)
 
     game = SnakeGame()
     renderer = Renderer()
