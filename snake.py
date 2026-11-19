@@ -61,6 +61,10 @@ class SnakeGame:
         else:
             self.score += 1
             reward = config["eating_reward"]
+
+            if len(self.snake) == (SCREEN_WIDTH * SCREEN_HEIGHT) // BLOCK**2:
+                return True, reward
+
             self.food = spawn_food(self.snake)
 
         return False, reward
