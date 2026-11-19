@@ -14,25 +14,32 @@ import snake
 
 class Config:
     def __init__(self):
-        with open("runs.toml", "rb") as file:
-            self.sweep = toml.load(file)
         with open("config.toml", "rb") as file:
             self.default = toml.load(file)
+
+    def build_sweep(self):
+        with open("runs.toml", "rb") as file:
+            self.sweep = toml.load(file)
+
         self.configs = []
 
-    def update(self, sweep=None):
-        if not sweep:
-            sweep = dict(list(self.sweep.items())[1:]).copy()
+        overrides = dict(list(self.sweep.items())[1:])
+
         for seed in self.sweep["seed"]:
-            for run_name in sweep:
-                experiment_config = sweep.copy()
-                experiment_config["seed"] = seed
-
-                for key in self.default:
-                    if key not in experiment_config:
-                        experiment_config[key] = self.default[key]
-
+            for run_name in overrides:
+                experiment_config = overrides[run_name].copy()
+                experiment_config = self.merge_with_defaults(experiment_config, seed)
                 self.configs.append(experiment_config)
+
+    def merge_with_defaults(self, experiment_config, seed=None):
+        if seed is not None:
+            experiment_config["seed"] = seed
+
+        for key in self.default:
+            if key not in experiment_config:
+                experiment_config[key] = self.default[key]
+
+        return experiment_config
 
     def get_processes(self):
         if len(self.configs) >= 4:
@@ -98,13 +105,12 @@ class GeneticAlgorithm:
             "survival_reward": solution[4],
         }
 
-        self.config.update(parameters)
-        stats = run_config(self.config.configs[0], self.results, self.experiment_dir)
-        fitness = stats[0] / (
-            (snake.SCREEN_WIDTH * snake.SCREEN_HEIGHT) / snake.BLOCK**2
-        )
+        run_config = self.config.merge_with_defaults(parameters)
+        stats = run_experiment(run_config, self.results, self.experiment_dir)
+        fitness = stats[1]
 
-        print("Solution checked!")
+        print(f"Completed generations: {ga_instance.generations_completed}")
+
         return fitness
 
     def run(self):
@@ -146,7 +152,7 @@ def run_experiment(config, results, experiment_dir):
 def manual_main():
     jobs = []
     config = Config()
-    config.update()
+    config.build_sweep()
     processes = config.get_processes()
     experiment_dir = snake.make_experiment_dir()
     results = ResultsLog(experiment_dir)
