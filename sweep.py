@@ -110,9 +110,10 @@ class GeneticAlgorithm:
         stats = run_experiment(run_config, self.results, self.experiment_dir)
         fitness = stats[1]
 
-        print(f"Completed generations: {ga_instance.generations_completed}")
-
         return fitness
+
+    def on_generation(self, ga_instance):
+        print(f"Generations completed: {ga_instance.generations_completed}")
 
     def run(self):
         ga_instance = pygad.GA(
@@ -129,6 +130,7 @@ class GeneticAlgorithm:
             mutation_type=self.mutation_type,
             mutation_num_genes=self.mutation_num_genes,
             parallel_processing=["process", 4],
+            on_generation=self.on_generation,
         )
 
         ga_instance.run()
