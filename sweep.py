@@ -134,8 +134,9 @@ class GeneticAlgorithm:
 
 
 def run_experiment(config, results, experiment_dir):
-    random.seed(config["seed"])
-    torch.manual_seed(config["seed"])
+    if "seed" in config:
+        random.seed(config["seed"])
+        torch.manual_seed(config["seed"])
 
     game = snake.SnakeGame()
     renderer = None

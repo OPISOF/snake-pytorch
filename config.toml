@@ -7,4 +7,4 @@ death_reward = -10
 eating_reward = 10
 limit_games = 1500 
 step_limit = 200 
-seed = 0
+# seed = 0 

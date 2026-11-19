@@ -384,8 +384,9 @@ def main():
     with open("config.toml", "rb") as file:
         config = tomllib.load(file)
 
-    random.seed(config["seed"])
-    torch.manual_seed(config["seed"])
+    if "seed" in config:
+        random.seed(config["seed"])
+        torch.manual_seed(config["seed"])
 
     game = SnakeGame()
     renderer = Renderer()
