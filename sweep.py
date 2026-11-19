@@ -127,7 +127,7 @@ class GeneticAlgorithm:
         ga_instance.run()
 
 
-def run_config(config, results, experiment_dir):
+def run_experiment(config, results, experiment_dir):
     random.seed(config["seed"])
     torch.manual_seed(config["seed"])
 
@@ -154,7 +154,7 @@ def manual_main():
     with Pool(processes) as pool:
         for parameters in config.configs:
             jobs.append(
-                pool.apply_async(run_config, (parameters, results, experiment_dir))
+                pool.apply_async(run_experiment, (parameters, results, experiment_dir))
             )
         for job in jobs:
             job.get()
