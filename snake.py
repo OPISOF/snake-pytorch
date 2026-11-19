@@ -144,9 +144,9 @@ class SnakeGame:
 
 
 class Renderer:
-    def __init__(self):
+    def __init__(self, enabled=True):
         pygame.init()
-        self.enabled = False
+        self.enabled = enabled
         random_colour = random.Random()
         self.snake_colour = (
             random_colour.randint(0, 255),
@@ -243,13 +243,13 @@ class Agent:
 
 
 class Plot:
-    def __init__(self, experiment_dir):
+    def __init__(self, experiment_dir, enabled=True):
         self.score_series = []
         self.smooth_score_series = []
         self.mean_score_series = []
-        self.enabled = True
+        self.enabled = enabled
         self.init()
-        self.experiment_dir = experiment_dir
+        self.experiment_dir = experiment_dir 
 
     def init(self):
         if self.enabled:
@@ -396,7 +396,7 @@ def main():
     renderer = Renderer()
     agent = Agent(config)
     experiment_dir = make_experiment_dir()
-    plot = Plot(experiment_dir)
+    plot = Plot(experiment_dir, enabled=True)
 
     run(config, game, renderer, agent, plot)
 

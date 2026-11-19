@@ -146,8 +146,7 @@ def run_experiment(config, results, experiment_dir):
     renderer = None
     agent = snake.Agent(config)
     matplotlib_use("Agg")
-    plot = snake.Plot(experiment_dir)
-    plot.enabled = False
+    plot = snake.Plot(experiment_dir, enabled=False)
 
     stats = snake.run(config, game, renderer, agent, plot)
     results.add(stats, config)
