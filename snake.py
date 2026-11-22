@@ -246,13 +246,12 @@ class Agent:
 
 
 class Plot:
-    def __init__(self, experiment_dir, enabled=True):
+    def __init__(self, enabled=True):
         self.score_series = []
         self.smooth_score_series = []
         self.mean_score_series = []
         self.enabled = enabled
         self.init()
-        self.experiment_dir = experiment_dir 
 
     def init(self):
         if self.enabled:
@@ -280,17 +279,60 @@ class Plot:
             sum(self.score_series[-50:]) / len(self.score_series[-50:])
         )
 
-    def save(self, config):
+    def save(self, run_file):
         self.update()
-
-        run_name = get_run_name(config)
-
-        plt.savefig(f"{self.experiment_dir}/{run_name}")
+        plt.savefig(run_file)
 
     def get_stats(self, exploration_games):
-        max_score = max(self.score_series)
-        final_mean_score = sum(self.score_series[-100:]) / len(self.score_series[-100:])
-        return [max_score, final_mean_score]
+        self.max_score = max(self.score_series)
+        self.final_mean_score = sum(self.score_series[-100:]) / len(
+            self.score_series[-100:]
+        )
+
+
+class RunPaths:
+    def __init__(self, run_type):
+        self.single_runs_dir = "./runs/single_runs"
+        self.manual_sweeps_dir = "./runs/manual_sweeps"
+        self.GA_dir = "./runs/GA"
+
+        if not os.path.exists(self.single_runs_dir):
+            os.makedirs(self.single_runs_dir)
+        if not os.path.exists(self.manual_sweeps_dir):
+            os.makedirs(self.manual_sweeps_dir)
+        if not os.path.exists(self.GA_dir):
+            os.makedirs(self.GA_dir)
+
+        self.timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        self.run_type = run_type
+
+        if self.run_type == "single_run":
+            self.experiment_dir = self.single_runs_dir
+        elif self.run_type == "manual_sweep":
+            self.experiment_dir = f"{self.manual_sweeps_dir}/{self.timestamp}"
+        elif self.run_type == "GA":
+            self.experiment_dir = f"{self.GA_dir}/{self.timestamp}"
+
+        if not os.path.exists(self.experiment_dir):
+            os.makedirs(self.experiment_dir)
+
+    def get_run_file_name(
+        self, seed="_random", config_name=None, run_number=None, generation=None
+    ):
+        if self.run_type == "single_run":
+            self.run_file = f"{self.experiment_dir}/{self.timestamp}_seed{seed}"
+
+        elif self.run_type == "manual_sweep":
+            self.run_file = (
+                f"{self.experiment_dir}/run{run_number}_seed{seed}_{config_name}"
+            )
+
+        elif self.run_type == "GA":
+            self.run_file = (
+                f"{self.experiment_dir}/run{run_number}_gen{generation}_seed{seed}"
+            )
+
+        return self.run_file
 
 
 def is_crash(x, y, snake):
@@ -315,28 +357,6 @@ def spawn_food(snake, randomizer):
     return food
 
 
-def make_experiment_dir():
-    if not os.path.exists("./runs"):
-        os.makedirs("./runs")
-
-    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
-    experiment_dir = f"./runs/{timestamp}"
-
-    if not os.path.exists(experiment_dir):
-        os.makedirs(experiment_dir)
-
-    return experiment_dir
-
-
-def get_run_name(config):
-    run_name = ""
-    for key in config:
-        keys = str(config[key]).split(".")
-        for i in keys:
-            run_name += i
-        run_name += "-"
-
-    return run_name
 def set_seed(config):
     if "seed" in config:
         seed = config["seed"]
@@ -383,9 +403,8 @@ def run(config, game, renderer, agent, plot):
 
             if game.count >= config["limit_games"]:
                 plot.update()
-                plot.save(config)
-                stats = plot.get_stats(config["exploration_games"])
-                return stats
+                plot.get_stats(config["exploration_games"])
+                return plot
 
             if game.count % PLOT_RATE == 0 and plot.enabled:
                 plot.update()
@@ -402,10 +421,14 @@ def main():
 
     game = SnakeGame(randomizer)
     renderer = Renderer()
-    experiment_dir = make_experiment_dir()
-    plot = Plot(experiment_dir, enabled=True)
-    run(config, game, renderer, agent, plot)
     agent = Agent(config, randomizer)
+    run_paths = RunPaths("single_run")
+    plot = Plot(enabled=True)
+
+    plot = run(config, game, renderer, agent, plot)
+    if plot is not None:
+        run_file = run_paths.get_run_file_name()
+        plot.save(run_file)
 
 
 if __name__ == "__main__":

@@ -24,12 +24,13 @@ class Config:
         seeds = self.sweep["seed"]
 
         for seed in seeds:
-            for run_name in self.sweep:
-                if run_name != "seed":
-                    experiment_config = self.sweep[run_name].copy()
+            for config_name in self.sweep:
+                if config_name != "seed":
+                    experiment_config = self.sweep[config_name].copy()
                     experiment_config = self.merge_with_defaults(
                         experiment_config, seed
                     )
+                    experiment_config["config_name"] = config_name
                     self.configs.append(experiment_config)
 
     def merge_with_defaults(self, experiment_config, seed=None):
@@ -59,11 +60,10 @@ class ResultsLog:
                 writer = csv.writer(csvfile)
                 writer.writerow(fieldnames)
 
-    def add(self, stats, config):
-        run_name = snake.get_run_name(config)
+    def add(self, stats, run_file):
         with open(self.filename, "a", newline="") as csvfile:
             writer = csv.writer(csvfile)
-            writer.writerow([run_name] + stats)
+            writer.writerow([run_file] + stats)
 
 
 class GeneticAlgorithm:
@@ -94,8 +94,8 @@ class GeneticAlgorithm:
         self.mutation_num_genes = (2, 1)
 
         self.config = Config()
-        self.experiment_dir = snake.make_experiment_dir()
-        self.results = ResultsLog(self.experiment_dir)
+        self.run_paths = snake.RunPaths("GA")
+        self.results = ResultsLog(self.run_paths.experiment_dir)
 
     def score_parameters(self, ga_instance, solution, solution_idx):
         parameters = {
@@ -107,7 +107,13 @@ class GeneticAlgorithm:
         }
 
         run_config = self.config.merge_with_defaults(parameters)
-        stats = run_experiment(run_config, self.results, self.experiment_dir)
+        stats = run_experiment(
+            run_config,
+            self.results,
+            self.run_paths,
+            solution_idx,
+            generation=ga_instance.generations_completed,
+        )
         fitness = stats[1]
 
         return fitness
@@ -136,21 +142,34 @@ class GeneticAlgorithm:
         ga_instance.run()
         print("The process is finished! Look at the graph.")
         fitness_graph = ga_instance.plot_fitness()
-        fitness_graph.savefig(f"{self.experiment_dir}/fitness_graph.png")
-        ga_instance.save(f"./{self.experiment_dir}/pygad_GA")
+        fitness_graph.savefig(f"{self.run_paths.experiment_dir}/fitness_graph.png")
+        ga_instance.save(f"./{self.run_paths.experiment_dir}/pygad_GA")
 
 
-def run_experiment(config, results, experiment_dir):
+def run_experiment(
+    config, results, run_paths, run_number, generation=None, config_name=None
+):
+
     randomizer = snake.set_seed(config)
 
     game = snake.SnakeGame(randomizer)
     renderer = None
     agent = snake.Agent(config, randomizer)
     matplotlib_use("Agg")
-    plot = snake.Plot(experiment_dir, enabled=False)
+    plot = snake.Plot(enabled=False)
 
-    stats = snake.run(config, game, renderer, agent, plot)
-    results.add(stats, config)
+    plot = snake.run(config, game, renderer, agent, plot)
+
+    run_file = run_paths.get_run_file_name(
+        config["seed"],
+        config_name=config_name,
+        run_number=run_number,
+        generation=generation,
+    )
+    plot.save(run_file)
+
+    stats = [plot.max_score, plot.final_mean_score]
+    results.add(stats, run_file)
     return stats
 
 
@@ -159,13 +178,24 @@ def manual_main():
     config = Config()
     config.build_sweep()
     processes = config.get_processes()
-    experiment_dir = snake.make_experiment_dir()
-    results = ResultsLog(experiment_dir)
+    run_paths = snake.RunPaths("manual_sweep")
+    run_number = 0
+    results = ResultsLog(run_paths.experiment_dir)
 
     with Pool(processes) as pool:
         for parameters in config.configs:
+            run_number += 1
             jobs.append(
-                pool.apply_async(run_experiment, (parameters, results, experiment_dir))
+                pool.apply_async(
+                    run_experiment,
+                    args=(
+                        parameters,
+                        results,
+                        run_paths,
+                        run_number,
+                    ),
+                    kwds={"config_name": parameters["config_name"]},
+                )
             )
         for job in jobs:
             job.get()
