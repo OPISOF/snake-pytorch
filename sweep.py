@@ -141,12 +141,11 @@ class GeneticAlgorithm:
 
 
 def run_experiment(config, results, experiment_dir):
-    if "seed" in config:
-        snake.set_seed(config)
+    randomizer = snake.set_seed(config)
 
-    game = snake.SnakeGame()
+    game = snake.SnakeGame(randomizer)
     renderer = None
-    agent = snake.Agent(config)
+    agent = snake.Agent(config, randomizer)
     matplotlib_use("Agg")
     plot = snake.Plot(experiment_dir, enabled=False)
 

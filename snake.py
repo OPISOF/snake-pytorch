@@ -18,14 +18,15 @@ COMPASS = ["UP", "RIGHT", "DOWN", "LEFT"]
 
 
 class SnakeGame:
-    def __init__(self):
+    def __init__(self, randomizer):
         self.count = 0
+        self.randomizer = randomizer
         self.reset()
 
     def reset(self):
         self.snake = [[100, 100], [100 + BLOCK, 100]]
         self.direction = "DOWN"
-        self.food = spawn_food(self.snake)
+        self.food = spawn_food(self.snake, self.randomizer)
         self.score = 0
         self.count += 1
         self.steps = 0
@@ -65,7 +66,7 @@ class SnakeGame:
             if len(self.snake) == (SCREEN_WIDTH * SCREEN_HEIGHT) // BLOCK**2:
                 return True, reward
 
-            self.food = spawn_food(self.snake)
+            self.food = spawn_food(self.snake, self.randomizer)
 
         return False, reward
 
@@ -192,7 +193,7 @@ class Renderer:
 
 
 class Agent:
-    def __init__(self, config):
+    def __init__(self, config, randomizer):
         self.model = nn.Sequential(
             nn.Linear(7, config["inner_layer"]),
             nn.ReLU(),
@@ -200,6 +201,8 @@ class Agent:
         )
         self.optimizer = optim.Adam(self.model.parameters(), config["learning_rate"])
         self.criterion = nn.MSELoss()
+
+        self.randomizer = randomizer
 
     def choose_action(self, state, count, config):
         final_move = [0, 0, 0]
@@ -209,10 +212,10 @@ class Agent:
             prediction = self.model(state0)
         move = torch.argmax(prediction).item()
 
-        if config["exploration_games"] - count > random.randint(
+        if config["exploration_games"] - count > self.randomizer.randint(
             0, config["exploration_games"]
         ):
-            move = random.randint(0, 2)
+            move = self.randomizer.randint(0, 2)
 
         final_move[move] = 1
         return final_move
@@ -300,11 +303,11 @@ def is_crash(x, y, snake):
         return False
 
 
-def spawn_food(snake):
+def spawn_food(snake, randomizer):
     while True:
         food = [
-            random.randint(0, SCREEN_WIDTH // BLOCK - 1) * BLOCK,
-            random.randint(0, SCREEN_HEIGHT // BLOCK - 1) * BLOCK,
+            randomizer.randint(0, SCREEN_WIDTH // BLOCK - 1) * BLOCK,
+            randomizer.randint(0, SCREEN_HEIGHT // BLOCK - 1) * BLOCK,
         ]
         if food not in snake:
             break
@@ -334,11 +337,17 @@ def get_run_name(config):
         run_name += "-"
 
     return run_name
-
-
 def set_seed(config):
-    random.seed(config["seed"])
-    torch.manual_seed(config["seed"])
+    if "seed" in config:
+        seed = config["seed"]
+    else:
+        seed = random.randint(0, 100000)
+        config["seed"] = seed
+
+    randomizer = random.Random(seed)
+    torch.manual_seed(seed)
+
+    return randomizer
 
 
 def run(config, game, renderer, agent, plot):
@@ -389,16 +398,14 @@ def main():
     with open("config.toml", "rb") as file:
         config = tomllib.load(file)
 
-    if "seed" in config:
-        set_seed(config)
+    randomizer = set_seed(config)
 
-    game = SnakeGame()
+    game = SnakeGame(randomizer)
     renderer = Renderer()
-    agent = Agent(config)
     experiment_dir = make_experiment_dir()
     plot = Plot(experiment_dir, enabled=True)
-
     run(config, game, renderer, agent, plot)
+    agent = Agent(config, randomizer)
 
 
 if __name__ == "__main__":
