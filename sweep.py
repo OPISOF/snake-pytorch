@@ -12,6 +12,18 @@ import snake
 MAX_WORKERS = 4
 
 
+PARAMETER_NAMES = [
+    "inner_layer",
+    "trainer_gamma",
+    "learning_rate",
+    "exploration_games",
+    "survival_reward",
+    "death_reward",
+    "eating_reward",
+    "step_limit",
+]
+
+
 class Config:
     def __init__(self):
         with open("config.toml", "rb") as file:
@@ -50,18 +62,27 @@ class Config:
 
 class ResultsLog:
     def __init__(self, experiment_dir):
+
         self.filename = f"{experiment_dir}/stats.csv"
         path = Path(self.filename)
+
         if not path.exists():
             with open(self.filename, "a", newline="") as csvfile:
-                fieldnames = ["name", "max score", "mean_score (last 100 games)"]
+                fieldnames = (
+                    ["name"]
+                    + PARAMETER_NAMES
+                    + ["max score", "mean_score (last 100 games)"]
+                )
+
                 writer = csv.writer(csvfile)
                 writer.writerow(fieldnames)
 
-    def add(self, stats, run_name):
+    def add(self, stats, run_name, config):
+        parameters = [config[key] for key in PARAMETER_NAMES]
+
         with open(self.filename, "a", newline="") as csvfile:
             writer = csv.writer(csvfile)
-            writer.writerow([run_name] + stats)
+            writer.writerow([run_name] + parameters + stats)
 
 
 class GeneticAlgorithm:
@@ -167,7 +188,7 @@ def run_experiment(
 
         plot.save(run_file)
 
-        results.add(stats, run_paths.run_name)
+        results.add(stats, run_paths.run_name, config)
 
     return stats
 
