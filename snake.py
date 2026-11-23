@@ -1,4 +1,7 @@
 import os
+
+os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
+
 import random
 import time
 from datetime import datetime
