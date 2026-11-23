@@ -118,8 +118,8 @@ class GeneticAlgorithm:
     def score_parameters(self, ga_instance, solution, solution_idx):
         parameters = {
             "inner_layer": solution[0],
-            "trainer_gamma": solution[1],
-            "learning_rate": solution[2],
+            "trainer_gamma": round(solution[1], 3),
+            "learning_rate": float(f"{solution[2]:.3g}"),
             "exploration_games": solution[3],
             "survival_reward": solution[4],
         }
