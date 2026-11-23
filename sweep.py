@@ -58,10 +58,10 @@ class ResultsLog:
                 writer = csv.writer(csvfile)
                 writer.writerow(fieldnames)
 
-    def add(self, stats, run_file):
+    def add(self, stats, run_name):
         with open(self.filename, "a", newline="") as csvfile:
             writer = csv.writer(csvfile)
-            writer.writerow([run_file] + stats)
+            writer.writerow([run_name] + stats)
 
 
 class GeneticAlgorithm:
@@ -167,7 +167,7 @@ def run_experiment(
     plot.save(run_file)
 
     stats = [plot.max_score, plot.final_mean_score]
-    results.add(stats, run_file)
+    results.add(stats, run_paths.run_name)
     return stats
 
 

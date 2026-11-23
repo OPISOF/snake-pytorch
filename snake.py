@@ -323,14 +323,12 @@ class RunPaths:
             self.run_file = f"{self.experiment_dir}/{self.timestamp}"
 
         elif self.run_type == "manual_sweep":
-            self.run_file = (
-                f"{self.experiment_dir}/run{run_number}_seed{seed}_{config_name}"
-            )
+            self.run_name = f"run{run_number}_seed{seed}_{config_name}"
+            self.run_file = f"{self.experiment_dir}/{self.run_name}"
 
         elif self.run_type == "GA":
-            self.run_file = (
-                f"{self.experiment_dir}/gen{generation}_run{run_number}_seed{seed}"
-            )
+            self.run_name = f"gen{generation}_run{run_number}_seed{seed}"
+            self.run_file = f"{self.experiment_dir}/{self.run_name}"
 
         return self.run_file
 
