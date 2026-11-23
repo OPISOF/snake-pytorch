@@ -329,7 +329,7 @@ class RunPaths:
 
         elif self.run_type == "GA":
             self.run_file = (
-                f"{self.experiment_dir}/run{run_number}_gen{generation}_seed{seed}"
+                f"{self.experiment_dir}/gen{generation}_run{run_number}_seed{seed}"
             )
 
         return self.run_file
