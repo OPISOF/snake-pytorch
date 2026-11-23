@@ -157,17 +157,20 @@ def run_experiment(
     plot = snake.Plot(enabled=False)
 
     plot = snake.run(config, game, renderer, agent, plot)
-
-    run_file = run_paths.get_run_file_name(
-        config["seed"],
-        config_name=config_name,
-        run_number=run_number,
-        generation=generation,
-    )
-    plot.save(run_file)
-
     stats = [plot.max_score, plot.final_mean_score]
-    results.add(stats, run_paths.run_name)
+
+    if run_number is not None:
+        run_file = run_paths.get_run_file_name(
+            config["seed"],
+            config_name=config_name,
+            run_number=run_number,
+            generation=generation,
+        )
+
+        plot.save(run_file)
+
+        results.add(stats, run_paths.run_name)
+
     return stats
 
 
