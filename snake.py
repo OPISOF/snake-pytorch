@@ -317,10 +317,10 @@ class RunPaths:
             os.makedirs(self.experiment_dir)
 
     def get_run_file_name(
-        self, seed="_random", config_name=None, run_number=None, generation=None
+        self, seed=None, config_name=None, run_number=None, generation=None
     ):
         if self.run_type == "single_run":
-            self.run_file = f"{self.experiment_dir}/{self.timestamp}_seed{seed}"
+            self.run_file = f"{self.experiment_dir}/{self.timestamp}"
 
         elif self.run_type == "manual_sweep":
             self.run_file = (
