@@ -361,7 +361,7 @@ def set_seed(config):
     if "seed" in config:
         seed = config["seed"]
     else:
-        seed = random.randint(0, 100000)
+        seed = random.SystemRandom().randint(0, 100000)
         config["seed"] = seed
 
     randomizer = random.Random(seed)
