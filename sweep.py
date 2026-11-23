@@ -175,7 +175,7 @@ def run_experiment(
     matplotlib_use("Agg")
     plot = snake.Plot(enabled=False)
 
-    plot = snake.run(config, game, renderer, agent, plot)
+    snake.run(config, game, renderer, agent, plot)
     stats = [plot.max_score, plot.final_mean_score]
 
     if run_number is not None:

@@ -286,7 +286,7 @@ class Plot:
         self.update()
         plt.savefig(run_file)
 
-    def get_stats(self, exploration_games):
+    def get_stats(self):
         self.max_score = max(self.score_series)
         self.final_mean_score = sum(self.score_series[-100:]) / len(
             self.score_series[-100:]
@@ -415,9 +415,8 @@ def run(config, game, renderer, agent, plot):
                 config["limit_games"] is not None
                 and game.count >= config["limit_games"]
             ):
-                plot.update()
-                plot.get_stats(config["exploration_games"])
-                return plot
+                plot.get_stats()
+                return
 
             if game.count % PLOT_RATE == 0 and plot.enabled:
                 plot.update()
@@ -439,10 +438,9 @@ def main():
     run_paths = RunPaths("single_run")
     plot = Plot(enabled=True)
 
-    plot = run(config, game, renderer, agent, plot)
-    if plot is not None:
-        run_file = run_paths.get_run_file_name()
-        plot.save(run_file)
+    run(config, game, renderer, agent, plot)
+    run_file = run_paths.get_run_file_name()
+    plot.save(run_file)
 
 
 if __name__ == "__main__":
