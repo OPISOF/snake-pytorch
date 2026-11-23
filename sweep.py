@@ -9,6 +9,8 @@ from matplotlib import use as matplotlib_use
 
 import snake
 
+MAX_WORKERS = 4
+
 
 class Config:
     def __init__(self):
@@ -42,12 +44,6 @@ class Config:
                 experiment_config[key] = self.default[key]
 
         return experiment_config
-
-    def get_processes(self):
-        if len(self.configs) >= 4:
-            return 4
-        else:
-            return len(self.configs)
 
 
 class ResultsLog:
@@ -135,7 +131,7 @@ class GeneticAlgorithm:
             crossover_type=self.crossover_type,
             mutation_type=self.mutation_type,
             mutation_num_genes=self.mutation_num_genes,
-            parallel_processing=["process", 4],
+            parallel_processing=["process", MAX_WORKERS],
             on_generation=self.on_generation,
         )
 
@@ -177,7 +173,7 @@ def manual_main():
     jobs = []
     config = Config()
     config.build_sweep()
-    processes = config.get_processes()
+    processes = min(len(config.configs), MAX_WORKERS)
     run_paths = snake.RunPaths("manual_sweep")
     run_number = 0
     results = ResultsLog(run_paths.experiment_dir)
