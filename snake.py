@@ -370,6 +370,15 @@ def set_seed(config):
     return randomizer
 
 
+def get_limit_games(config):
+    if "games_after_exploration" in config:
+        config["limit_games"] = (
+            config["exploration_games"] + config["games_after_exploration"]
+        )
+    else:
+        config["limit_games"] = None
+
+
 def run(config, game, renderer, agent, plot):
     while True:
         if renderer is not None:
@@ -401,7 +410,10 @@ def run(config, game, renderer, agent, plot):
         if is_game_over:
             plot.refresh_score(game.score)
 
-            if game.count >= config["limit_games"]:
+            if (
+                config["limit_games"] is not None
+                and game.count >= config["limit_games"]
+            ):
                 plot.update()
                 plot.get_stats(config["exploration_games"])
                 return plot
@@ -416,6 +428,7 @@ def run(config, game, renderer, agent, plot):
 def main():
     with open("config.toml", "rb") as file:
         config = tomllib.load(file)
+        get_limit_games(config)
 
     randomizer = set_seed(config)
 

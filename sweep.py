@@ -43,6 +43,8 @@ class Config:
             if key not in experiment_config:
                 experiment_config[key] = self.default[key]
 
+        snake.get_limit_games(experiment_config)
+
         return experiment_config
 
 
