@@ -84,7 +84,6 @@ class GeneticAlgorithm:
         self.num_genes = len(self.gene_space)
 
         self.parent_selection_type = "tournament"
-        self.keep_parents = 1
 
         self.crossover_type = "uniform"
 
@@ -129,7 +128,6 @@ class GeneticAlgorithm:
             gene_space=self.gene_space,
             gene_type=self.gene_type,
             parent_selection_type=self.parent_selection_type,
-            keep_parents=self.keep_parents,
             crossover_type=self.crossover_type,
             mutation_type=self.mutation_type,
             mutation_num_genes=self.mutation_num_genes,
