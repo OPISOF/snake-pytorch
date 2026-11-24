@@ -16,6 +16,7 @@ SCREEN_WIDTH, SCREEN_HEIGHT = 720, 480
 BLOCK = 20
 FPS = 40
 PLOT_RATE = 200
+PLOT_MAX_SCORE = 150
 
 COMPASS = ["UP", "RIGHT", "DOWN", "LEFT"]
 
@@ -269,7 +270,7 @@ class Plot:
         plt.xlabel("Game number")
         plt.ylabel("Score")
         plt.grid(False)
-        plt.ylim(0, 150)
+        plt.ylim(0, PLOT_MAX_SCORE)
 
     def draw(self):
         plt.draw()
