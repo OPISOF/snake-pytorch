@@ -1,4 +1,4 @@
-matplotlib
-pygad
-pygame
-torch
+matplotlib==3.11.2
+pygad==3.9.2
+pygame==2.6.1
+torch==2.15.0
