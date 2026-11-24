@@ -2,6 +2,8 @@
 
 ## Installation
 
+The program uses Python 3.11+
+
 Install the required dependencies:
 
 ```bash
