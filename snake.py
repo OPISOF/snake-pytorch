@@ -297,14 +297,14 @@ class RunPaths:
     def __init__(self, run_type):
         self.single_runs_dir = "./runs/single_runs"
         self.manual_sweeps_dir = "./runs/manual_sweeps"
-        self.GA_dir = "./runs/GA"
+        self.ga_dir = "./runs/GA"
 
         self.file_path = None
         self.file_name = None
 
         os.makedirs(self.single_runs_dir, exist_ok=True)
         os.makedirs(self.manual_sweeps_dir, exist_ok=True)
-        os.makedirs(self.GA_dir, exist_ok=True)
+        os.makedirs(self.ga_dir, exist_ok=True)
 
         self.timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         self.run_type = run_type
@@ -314,7 +314,7 @@ class RunPaths:
         elif self.run_type == "manual_sweep":
             self.experiment_dir = f"{self.manual_sweeps_dir}/{self.timestamp}"
         elif self.run_type == "GA":
-            self.experiment_dir = f"{self.GA_dir}/{self.timestamp}"
+            self.experiment_dir = f"{self.ga_dir}/{self.timestamp}"
 
         os.makedirs(self.experiment_dir, exist_ok=True)
 
