@@ -37,5 +37,5 @@ Enjoy yourself!
 - **`survival_reward`** is a reward for survival.
 - **`death_reward`** is a reward for death.
 - **`eating_reward`** is a reward for eating food.
-- **`games_after_exploration`** is the number of games after the exploration.
+- **`games_after_exploration`** is the number of games after the exploration. Without a value the run will last forever.
 - **`seed`** is random seed value.
