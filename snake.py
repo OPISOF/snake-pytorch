@@ -132,7 +132,6 @@ class SnakeGame:
                 general_state[1],
             ]
 
-        state = []
         state = danger + general_state
 
         return state
