@@ -77,12 +77,12 @@ class ResultsLog:
                 writer = csv.writer(csvfile)
                 writer.writerow(fieldnames)
 
-    def add(self, stats, run_name, config):
+    def add(self, stats, file_name, config):
         parameters = [config[key] for key in PARAMETER_NAMES]
 
         with open(self.filename, "a", newline="") as csvfile:
             writer = csv.writer(csvfile)
-            writer.writerow([run_name] + parameters + stats)
+            writer.writerow([file_name] + parameters + stats)
 
 
 class GeneticAlgorithm:
@@ -179,16 +179,16 @@ def run_experiment(
     stats = [plot.max_score, plot.final_mean_score]
 
     if run_number is not None:
-        run_file = run_paths.get_run_file_name(
+        run_paths.set_file_path_name(
             config["seed"],
             config_name=config_name,
             run_number=run_number,
             generation=generation,
         )
 
-        plot.save(run_file)
+        plot.save(run_paths.file_path)
 
-        results.add(stats, run_paths.run_name, config)
+        results.add(stats, run_paths.file_name, config)
 
     return stats
 

@@ -282,9 +282,9 @@ class Plot:
             sum(self.score_series[-50:]) / len(self.score_series[-50:])
         )
 
-    def save(self, run_file):
+    def save(self, file_path):
         self.update()
-        plt.savefig(run_file)
+        plt.savefig(file_path)
 
     def get_stats(self):
         self.max_score = max(self.score_series)
@@ -298,6 +298,9 @@ class RunPaths:
         self.single_runs_dir = "./runs/single_runs"
         self.manual_sweeps_dir = "./runs/manual_sweeps"
         self.GA_dir = "./runs/GA"
+
+        self.file_path = None
+        self.file_name = None
 
         if not os.path.exists(self.single_runs_dir):
             os.makedirs(self.single_runs_dir)
@@ -319,21 +322,19 @@ class RunPaths:
         if not os.path.exists(self.experiment_dir):
             os.makedirs(self.experiment_dir)
 
-    def get_run_file_name(
+    def set_file_path_name(
         self, seed=None, config_name=None, run_number=None, generation=None
     ):
         if self.run_type == "single_run":
-            self.run_file = f"{self.experiment_dir}/{self.timestamp}"
+            self.file_path = f"{self.experiment_dir}/{self.timestamp}"
 
         elif self.run_type == "manual_sweep":
-            self.run_name = f"run{run_number}_seed{seed}_{config_name}"
-            self.run_file = f"{self.experiment_dir}/{self.run_name}"
+            self.file_name = f"run{run_number}_seed{seed}_{config_name}"
+            self.file_path = f"{self.experiment_dir}/{self.file_name}"
 
         elif self.run_type == "GA":
-            self.run_name = f"gen{generation}_run{run_number}_seed{seed}"
-            self.run_file = f"{self.experiment_dir}/{self.run_name}"
-
-        return self.run_file
+            self.file_name = f"gen{generation}_run{run_number}_seed{seed}"
+            self.file_path = f"{self.experiment_dir}/{self.file_name}"
 
 
 def is_crash(x, y, snake):
@@ -439,8 +440,8 @@ def main():
     plot = Plot(enabled=True)
 
     run(config, game, renderer, agent, plot)
-    run_file = run_paths.get_run_file_name()
-    plot.save(run_file)
+    run_paths.set_file_path_name()
+    plot.save(run_paths.file_path)
 
 
 if __name__ == "__main__":
