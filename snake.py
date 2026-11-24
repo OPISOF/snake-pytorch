@@ -302,12 +302,9 @@ class RunPaths:
         self.file_path = None
         self.file_name = None
 
-        if not os.path.exists(self.single_runs_dir):
-            os.makedirs(self.single_runs_dir)
-        if not os.path.exists(self.manual_sweeps_dir):
-            os.makedirs(self.manual_sweeps_dir)
-        if not os.path.exists(self.GA_dir):
-            os.makedirs(self.GA_dir)
+        os.makedirs(self.single_runs_dir, exist_ok=True)
+        os.makedirs(self.manual_sweeps_dir, exist_ok=True)
+        os.makedirs(self.GA_dir, exist_ok=True)
 
         self.timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         self.run_type = run_type
@@ -319,8 +316,7 @@ class RunPaths:
         elif self.run_type == "GA":
             self.experiment_dir = f"{self.GA_dir}/{self.timestamp}"
 
-        if not os.path.exists(self.experiment_dir):
-            os.makedirs(self.experiment_dir)
+        os.makedirs(self.experiment_dir, exist_ok=True)
 
     def set_file_path_name(
         self, seed=None, config_name=None, run_number=None, generation=None
