@@ -5,7 +5,7 @@
 Install the required dependencies:
 
 ```bash
-pip3 install -r requirements
+pip3 install -r requirements.txt
 ```
 Then just start the program.
 
