@@ -20,7 +20,7 @@ Control the game using the following keys:
 - Space - Toggle rendering.
 Disabling rendering significantly speeds up training. 
 
-- Delete to kill snake.
+- Backspace to kill snake.
 
 Enjoy yourself!
 
