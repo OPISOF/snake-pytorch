@@ -104,5 +104,10 @@ After the experiments the results will be in the experiments folder. You can fin
 - **`survival_reward`** is a reward for survival.
 - **`death_reward`** is a reward for death.
 - **`eating_reward`** is a reward for eating food.
-- **`games_after_exploration`** is the number of games after the exploration. Without a value the run will last forever.
-- **`seed`** is random seed value.
+- **`games_after_exploration`** is the number of games after the exploration. Without a value the run will last forever. Sweeps and the GA need it, so keep it in `config.toml` 
+
+> A run lasts `exploration_games + games_after_exploration` games. 
+
+- **`step_limit`**. A game ends when its total steps exceed `snake length * step_limit`. This parameter prevents the agent from being stuck (Sometimes during the exploration the snake circles and doesn't grow)
+- **`seed`** is random seed value. Without a value a random seed will be created.
+
