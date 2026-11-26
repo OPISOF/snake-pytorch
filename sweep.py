@@ -229,18 +229,20 @@ def main():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--manual_sweep", help="run manual sweep", action="store_true"
-    )
+    parser.add_argument("--manual-sweep", help="run manual sweep", action="store_true")
     parser.add_argument("--ga", help="run genetic algorithm", action="store_true")
     args = parser.parse_args()
 
-    start_time = time.time()
+    if args.manual_sweep or args.ga:
+        start_time = time.time()
 
-    if args.manual_sweep:
-        manual_main()
+        if args.manual_sweep:
+            manual_main()
 
-    if args.ga:
-        main()
+        if args.ga:
+            main()
 
-    print("--- %s seconds ---" % (time.time() - start_time))
+        print("--- %s seconds ---" % (time.time() - start_time))
+
+    else:
+        parser.error("Choose --manual-sweep or --ga")
