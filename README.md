@@ -91,7 +91,9 @@ After the experiments the results will be in the experiments folder. You can fin
 
 ## Config
 
-> The `config.toml` contains the configuration parameters. 
+> The `config.toml` contains the default configuration parameters. 
+
+> The `runs.toml` contains configurations for manual sweeps.
 
 ### Parameters
 
