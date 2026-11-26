@@ -1,5 +1,9 @@
 # Snake Game
 
+The Snake Game is powered with PyTorch. Snake has an AI agent. It learns to play and improves its effectiveness during multiple game sessions. 
+
+The best DQN parameters were tuned with a genetic algorithm.  
+
 ## Installation
 
 The program uses Python 3.11+
