@@ -88,10 +88,8 @@ class ResultsLog:
 
 class GeneticAlgorithm:
     def __init__(self):
-        self.num_generations = 15
-        self.num_parents_mating = 8
-
-        self.sol_per_pop = 16
+        with open("ga.toml", "rb") as file:
+            self.ga_parameters = toml.load(file)
 
         self.gene_space = [
             [64, 128, 256, 512, 1024],  # inner_layer
@@ -142,10 +140,10 @@ class GeneticAlgorithm:
 
     def run(self):
         ga_instance = pygad.GA(
-            num_generations=self.num_generations,
-            num_parents_mating=self.num_parents_mating,
+            num_generations=self.ga_parameters["num_generations"],
+            num_parents_mating=self.ga_parameters["num_parents_mating"],
             fitness_func=self.score_parameters,
-            sol_per_pop=self.sol_per_pop,
+            sol_per_pop=self.ga_parameters["sol_per_pop"],
             num_genes=self.num_genes,
             gene_space=self.gene_space,
             gene_type=self.gene_type,
