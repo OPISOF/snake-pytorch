@@ -85,7 +85,9 @@ python3 sweep.py --ga
 
 The genetic algorithm powered by PyGad finds the best DQN parameters.  
 
-> The genetic algorithm's parameters are currently set in the code. In the future you will be able to change its parameters in a special toml file. 
+The `ga.toml` file keeps some of the genetic algorithm parameters.You can change the number of generations (`num_generations`), the number of parents mating (`num_parents_mating`) and the solutions per population (`sol_per_pop`) there. 
+
+> Other genetic algorithm parameters, such as selectable genes, `parent_selection_type`, `crossover_type` and `mutation_type` are currently set in the code.
 
 After the experiments the results will be in the experiments folder. You can find there run plots, csv file, fitness_graph, which shows the algorithm's progress during the generations, and the best pygad solution (pygad_GA.pkl). 
 
